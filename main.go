@@ -68,8 +68,24 @@ func main(){
 			}
 		case 4:
 			// delete task
+			if len(tasks) == 0 {
+				fmt.Println("No task available.")
+			}
+			fmt.Print("Enter Task number to delete: ")
+			taskIdString, _ := reader.ReadString('\n')
+			taskIdString = strings.TrimSpace(taskIdString)
+	
+			taskId, err :=strconv.Atoi(taskIdString)
+			if err == nil && taskId > 0 && taskId <= len(tasks) {
+				tasks = append(tasks[:taskId - 1], tasks[taskId:]...)
+				fmt.Print("Task deleted.\n")
+			} else {
+				fmt.Println(("Invalid input, please enter a number."))
+			}
 		case 5:
 			// exit task application
+			fmt.Println("Exiting the application.")
+			os.Exit(0)
 		}
 	}
 }
