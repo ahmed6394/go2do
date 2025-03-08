@@ -25,7 +25,7 @@ func main(){
 		input, _ := reader.ReadString('\n')
 		input = strings.TrimSpace(input)
 
-		choice, err :=strconv.Atoi((input))
+		choice, err :=strconv.Atoi(input)
 		if err != nil {
 			fmt.Println(("Invalid input, please enter a number."))
 		}
@@ -51,7 +51,21 @@ func main(){
 				}
 			}
 		case 3:
-			// mark task completed
+			// mark task complete
+			if len(tasks) == 0 {
+				fmt.Println("No task available.")
+			}
+			fmt.Print("Enter Task number to complete: ")
+			taskIdString, _ := reader.ReadString('\n')
+			taskIdString = strings.TrimSpace(taskIdString)
+	
+			taskId, err :=strconv.Atoi(taskIdString)
+			if err == nil && taskId > 0 && taskId <= len(tasks) {
+				tasks[taskId - 1] = "[Done] " + tasks[taskId - 1]
+				fmt.Print("Task marked as completed.\n")
+			} else {
+				fmt.Println(("Invalid input, please enter a number."))
+			}
 		case 4:
 			// delete task
 		case 5:
