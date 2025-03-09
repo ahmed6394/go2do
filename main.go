@@ -9,23 +9,55 @@ import (
 	"strings"
 )
 
+func displayMessage() {
+	fmt.Println("Welcome to the Task Manager")
+	fmt.Println("1. Add Task")
+	fmt.Println("2. List Task")
+	fmt.Println("3. Mark Task as Complete")
+	fmt.Println("4. Delete Task")
+	fmt.Println("5. Exit")
+}
+
+func getChoice(reader *bufio.Reader) (int, error) {
+	
+	input, _ := reader.ReadString('\n')
+	input = strings.TrimSpace(input)
+	return strconv.Atoi(input)
+}
+
+func getTaskName(reader bufio.Reader) string {
+	task, _ := reader.ReadString('\n')
+	return strings.TrimSpace(task)
+}
+
+func markTaskComplete(tasks []string, taskId int) ([]string, bool) {
+	if taskId > 0 && taskId <= len(tasks) {
+		tasks[taskId - 1] = "[Done] " + tasks[taskId - 1]
+		fmt.Print("Task marked as completed.\n")
+		return tasks, true
+	}
+	fmt.Println("Invalid task number.")
+	return tasks, false
+}
+func deleteTask(tasks []string, taskId int) ([]string, bool) {
+	if taskId > 0 && taskId <= len(tasks) {
+		tasks = append(tasks[:taskId - 1], tasks[taskId:]...)
+		fmt.Print("Task deleted.\n")
+		return tasks, true
+	}
+	fmt.Println("Invalid task number.")
+	return tasks, false
+}
+
 func main(){
 	var tasks []string
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Println("CLI-Based To-Do app task")
-	fmt.Println("1. Add a Task")
-	fmt.Println("2. List of tasks")
-	fmt.Println("3. Mark a task as Completed")
-	fmt.Println("4. Delete a task")
-	fmt.Println("5. Exit")
+	
 
 	for {
+		displayMessage()
 		fmt.Print("Enter your choice: ")
-
-		input, _ := reader.ReadString('\n')
-		input = strings.TrimSpace(input)
-
-		choice, err :=strconv.Atoi(input)
+		choice, err :=getChoice(reader)
 		if err != nil {
 			fmt.Println(("Invalid input, please enter a number."))
 		}
@@ -34,11 +66,8 @@ func main(){
 		case 1:
 			//add task
 			fmt.Println("Enter your task.")
-			task, _ := reader.ReadString('\n')
-			task = strings.TrimSpace(task)
-
 			// add this to task list
-			tasks = append(tasks, task)
+			tasks = append(tasks, getTaskName(*reader))
 			fmt.Println("Task added.")
 		case 2:
 			// task list
@@ -56,13 +85,10 @@ func main(){
 				fmt.Println("No task available.")
 			}
 			fmt.Print("Enter Task number to complete: ")
-			taskIdString, _ := reader.ReadString('\n')
-			taskIdString = strings.TrimSpace(taskIdString)
 	
-			taskId, err :=strconv.Atoi(taskIdString)
-			if err == nil && taskId > 0 && taskId <= len(tasks) {
-				tasks[taskId - 1] = "[Done] " + tasks[taskId - 1]
-				fmt.Print("Task marked as completed.\n")
+			taskId, err :=getChoice(reader)
+			if err == nil  {
+				markTaskComplete(tasks, taskId)
 			} else {
 				fmt.Println(("Invalid input, please enter a number."))
 			}
@@ -72,13 +98,10 @@ func main(){
 				fmt.Println("No task available.")
 			}
 			fmt.Print("Enter Task number to delete: ")
-			taskIdString, _ := reader.ReadString('\n')
-			taskIdString = strings.TrimSpace(taskIdString)
-	
-			taskId, err :=strconv.Atoi(taskIdString)
-			if err == nil && taskId > 0 && taskId <= len(tasks) {
-				tasks = append(tasks[:taskId - 1], tasks[taskId:]...)
-				fmt.Print("Task deleted.\n")
+
+			taskId, err :=getChoice(reader)
+			if err == nil {
+				tasks, _ = deleteTask(tasks, taskId)
 			} else {
 				fmt.Println(("Invalid input, please enter a number."))
 			}
